@@ -2,7 +2,7 @@
 
 namespace DvlShortcutSync.WinForm
 {
-    public class Item
+    public class Settings
     {
         public List<string> Paths { get; set; }
         public int TimerInMilliseconds { get; set; }

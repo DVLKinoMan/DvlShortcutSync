@@ -53,7 +53,7 @@
     <Compile Include="FormDvlSync.Designer.cs">
       <DependentUpon>FormDvlSync.cs</DependentUpon>
     </Compile>
-    <Compile Include="Item.cs" />
+    <Compile Include="Settings.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="FormDvlSync.resx">

@@ -1,6 +1,7 @@
 ﻿using DvlShortcutSync.Domain;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -25,17 +26,28 @@ namespace DvlShortcutSync.WinForm
         {
             this.WindowState = FormWindowState.Normal;
             var jsonFile = ReadJson();
-            textBoxItems.Text = string.Join(Environment.NewLine, jsonFile.Paths.ToArray());
+            FillDataGrid();
             textBoxTimer.Text = jsonFile.TimerInMilliseconds.ToString();
         }
 
-        private Item ReadJson()
+        private void FillDataGrid()
         {
-            var item = new Item();
+            var jsonFile = ReadJson();
+            dataGridViewFoldersToSync.Rows.Clear();
+            foreach (var sync in jsonFile.Paths)
+            {
+                var arr = sync.Split(',');
+                dataGridViewFoldersToSync.Rows.Add(arr[0], arr[1]);
+            }
+        }
+
+        private Settings ReadJson()
+        {
+            var item = new Settings();
             using (StreamReader r = new StreamReader("Settings.json"))
             {
                 string json = r.ReadToEnd();
-                item = JsonConvert.DeserializeObject<Item>(json);
+                item = JsonConvert.DeserializeObject<Settings>(json);
             }
 
             return item;
@@ -86,10 +98,9 @@ namespace DvlShortcutSync.WinForm
         {
             if (int.TryParse(textBoxTimer.Text, out int interval) && interval >= 5000)
             {
-                var item = new Item
+                var item = new Settings
                 {
-                    Paths = textBoxItems.Text.Split(new[]
-                        {System.Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries).ToList(),
+                    Paths = ReadPathsFromDataGrid(),
                     TimerInMilliseconds = interval
                 };
                 string json = JsonConvert.SerializeObject(item);
@@ -104,6 +115,17 @@ namespace DvlShortcutSync.WinForm
             {
                 errorProviderTimer.SetError(textBoxTimer, "Interval should be integer and more or equal than 5 seconds");
             }
+        }
+
+        private List<string> ReadPathsFromDataGrid()
+        {
+            var list = new List<string>();
+            foreach (DataGridViewRow row in dataGridViewFoldersToSync.Rows)
+                if (row.Cells.Count == 2 && !string.IsNullOrEmpty(row.Cells[0].Value.ToString()) &&
+                    !string.IsNullOrEmpty(row.Cells[0].Value.ToString()))
+                    list.Add($"{row.Cells[0].Value}, {row.Cells[1].Value}");
+
+            return list;
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -133,7 +155,15 @@ namespace DvlShortcutSync.WinForm
             else if (e.Button == MouseButtons.Left)
                 OpenForm();
         }
-#endregion
+        #endregion
 
+        private void dataGridViewFoldersToSync_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (folderBrowserDialog1.ShowDialog() == DialogResult.OK)
+            {
+                dataGridViewFoldersToSync.Rows[e.RowIndex].Cells[e.ColumnIndex].Value =
+                    folderBrowserDialog1.SelectedPath;
+            }
+        }
     }
 }

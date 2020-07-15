@@ -32,16 +32,20 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormDvlSync));
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.CustomNotifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
-            this.textBoxItems = new System.Windows.Forms.TextBox();
+            this.CustomContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.buttonSave = new System.Windows.Forms.Button();
             this.textBoxTimer = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
-            this.CustomContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.errorProviderTimer = new System.Windows.Forms.ErrorProvider(this.components);
+            this.dataGridViewFoldersToSync = new System.Windows.Forms.DataGridView();
+            this.ColumnFirstFolder = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ColumnSecondFolder = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.CustomContextMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.errorProviderTimer)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewFoldersToSync)).BeginInit();
             this.SuspendLayout();
             // 
             // timer1
@@ -58,13 +62,20 @@
             this.CustomNotifyIcon.MouseClick += new System.Windows.Forms.MouseEventHandler(this.CustomNotifyIcon_MouseClick);
             this.CustomNotifyIcon.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.notifyIcon1_MouseDoubleClick);
             // 
-            // textBoxItems
+            // CustomContextMenu
             // 
-            this.textBoxItems.Location = new System.Drawing.Point(52, 55);
-            this.textBoxItems.Multiline = true;
-            this.textBoxItems.Name = "textBoxItems";
-            this.textBoxItems.Size = new System.Drawing.Size(485, 184);
-            this.textBoxItems.TabIndex = 1;
+            this.CustomContextMenu.ImageScalingSize = new System.Drawing.Size(20, 20);
+            this.CustomContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.exitToolStripMenuItem});
+            this.CustomContextMenu.Name = "CustomContextMenu";
+            this.CustomContextMenu.Size = new System.Drawing.Size(103, 28);
+            // 
+            // exitToolStripMenuItem
+            // 
+            this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(102, 24);
+            this.exitToolStripMenuItem.Text = "Exit";
+            this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
             // buttonSave
             // 
@@ -101,35 +112,49 @@
             this.label2.TabIndex = 5;
             this.label2.Text = "Folder Paths to Sync:";
             // 
-            // CustomContextMenu
-            // 
-            this.CustomContextMenu.ImageScalingSize = new System.Drawing.Size(20, 20);
-            this.CustomContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.exitToolStripMenuItem});
-            this.CustomContextMenu.Name = "CustomContextMenu";
-            this.CustomContextMenu.Size = new System.Drawing.Size(103, 28);
-            // 
-            // exitToolStripMenuItem
-            // 
-            this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(102, 24);
-            this.exitToolStripMenuItem.Text = "Exit";
-            this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
-            // 
             // errorProviderTimer
             // 
             this.errorProviderTimer.ContainerControl = this;
+            // 
+            // dataGridViewFoldersToSync
+            // 
+            this.dataGridViewFoldersToSync.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
+            this.dataGridViewFoldersToSync.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridViewFoldersToSync.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.ColumnFirstFolder,
+            this.ColumnSecondFolder});
+            this.dataGridViewFoldersToSync.Location = new System.Drawing.Point(52, 63);
+            this.dataGridViewFoldersToSync.Name = "dataGridViewFoldersToSync";
+            this.dataGridViewFoldersToSync.RowHeadersWidth = 51;
+            this.dataGridViewFoldersToSync.RowTemplate.Height = 24;
+            this.dataGridViewFoldersToSync.Size = new System.Drawing.Size(564, 172);
+            this.dataGridViewFoldersToSync.TabIndex = 6;
+            this.dataGridViewFoldersToSync.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewFoldersToSync_CellDoubleClick);
+            // 
+            // ColumnFirstFolder
+            // 
+            this.ColumnFirstFolder.HeaderText = "First Folder Path";
+            this.ColumnFirstFolder.MinimumWidth = 6;
+            this.ColumnFirstFolder.Name = "ColumnFirstFolder";
+            this.ColumnFirstFolder.Width = 125;
+            // 
+            // ColumnSecondFolder
+            // 
+            this.ColumnSecondFolder.HeaderText = "Second Folder Path";
+            this.ColumnSecondFolder.MinimumWidth = 6;
+            this.ColumnSecondFolder.Name = "ColumnSecondFolder";
+            this.ColumnSecondFolder.Width = 125;
             // 
             // FormDvlSync
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(659, 393);
+            this.Controls.Add(this.dataGridViewFoldersToSync);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.textBoxTimer);
             this.Controls.Add(this.buttonSave);
-            this.Controls.Add(this.textBoxItems);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.MaximizeBox = false;
             this.Name = "FormDvlSync";
@@ -140,6 +165,7 @@
             this.Load += new System.EventHandler(this.Form1_Load);
             this.CustomContextMenu.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.errorProviderTimer)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewFoldersToSync)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -148,7 +174,6 @@
         #endregion
         private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.NotifyIcon CustomNotifyIcon;
-        private System.Windows.Forms.TextBox textBoxItems;
         private System.Windows.Forms.Button buttonSave;
         private System.Windows.Forms.TextBox textBoxTimer;
         private System.Windows.Forms.Label label1;
@@ -156,6 +181,10 @@
         private System.Windows.Forms.ContextMenuStrip CustomContextMenu;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
         private System.Windows.Forms.ErrorProvider errorProviderTimer;
+        private System.Windows.Forms.DataGridView dataGridViewFoldersToSync;
+        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnFirstFolder;
+        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnSecondFolder;
+        private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
     }
 }
 
