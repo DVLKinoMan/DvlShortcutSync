@@ -9,7 +9,7 @@ namespace DvlShortcutSync.WinForm
 {
     public partial class FormDvlSync : Form
     {
-        private bool exitClicked = false;
+        private bool _exitClicked = false;
 
         public FormDvlSync()
         {
@@ -18,6 +18,7 @@ namespace DvlShortcutSync.WinForm
             this.CustomNotifyIcon.Visible = true;
             timer1.Interval = ReadJson().TimerInMilliseconds;
             timer1.Start();
+            Sync();
         }
 
         private void OpenForm()
@@ -46,30 +47,34 @@ namespace DvlShortcutSync.WinForm
             errorProviderTimer.Clear();
         }
 
-        #region Events
-        private void timer1_Tick(object sender, EventArgs e)
+        private void Sync()
         {
-            if (this.WindowState == FormWindowState.Minimized)
-            {
-                var item = ReadJson();
-                string[] paths = item.Paths.ToArray();
+            var item = ReadJson();
+            string[] paths = item.Paths.ToArray();
 
-                for (int i = 0; i < paths.Length; i++)
+            foreach (var path in paths)
+            {
+                var p = path.Split(',');
+                for (int j = 1; j < p.Length; j++)
                 {
-                    var p = paths[i].Split(',');
-                    for (int j = 1; j < p.Length; j++)
+                    try
                     {
-                        try
-                        {
-                            FoldersWorker.Sync2Folders(p[j].Trim(), p[j - 1].Trim());
-                        }
-                        catch (Exception exc)
-                        {
-                            MessageBox.Show(exc.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        }
+                        FoldersWorker.Sync2Folders(p[j].Trim(), p[j - 1].Trim());
+                    }
+                    catch (Exception exc)
+                    {
+                        //Log exception
                     }
                 }
             }
+        }
+
+        #region Events
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            if (this.WindowState == FormWindowState.Minimized)
+                Sync();
         }
 
         private void notifyIcon1_MouseDoubleClick(object sender, MouseEventArgs e)
@@ -93,6 +98,7 @@ namespace DvlShortcutSync.WinForm
                 //write string to file
                 System.IO.File.WriteAllText("Settings.json", json);
                 HideForm();
+                Sync();
             }
             else
             {
@@ -107,7 +113,7 @@ namespace DvlShortcutSync.WinForm
 
         private void FormDvlSync_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (!this.exitClicked)
+            if (!this._exitClicked)
             {
                 e.Cancel = true;
                 HideForm();
@@ -116,7 +122,7 @@ namespace DvlShortcutSync.WinForm
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            this.exitClicked = true;
+            this._exitClicked = true;
             Close();
         }
 
