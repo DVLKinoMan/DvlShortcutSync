@@ -135,7 +135,7 @@ namespace DvlShortcutSync.WinForm
 
         private void FormDvlSync_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (!this._exitClicked)
+            if (e.CloseReason != CloseReason.WindowsShutDown && !this._exitClicked)
             {
                 e.Cancel = true;
                 HideForm();
